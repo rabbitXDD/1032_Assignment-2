@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 namespace myMines
 {
     class Square : Button
@@ -14,6 +15,12 @@ namespace myMines
         private bool _dismantled = false;
         private bool _minded = false;
         private bool _opened = false;
+
+        public int status = 0;
+
+        StackPanel sp;
+        Image img;
+        Label lbl;
 
         public int ROW
         {
@@ -49,6 +56,15 @@ namespace myMines
             : base()
         {
             this.Background = System.Windows.Media.Brushes.LightGray;
+            sp = new StackPanel();
+            img = new Image();
+            lbl = new Label();
+            this.AddChild(sp);
+            this.FontSize = 12;
+            sp.Children.Add(img);
+            sp.Children.Add(lbl);
+            sp.IsEnabled = false;
+            this.Focusable = false;
 
             //this.Background = new System.Windows.Media.SolidColorBrush(
             //    System.Windows.Media.Colors.Green);
@@ -73,15 +89,52 @@ namespace myMines
                 if (_dismantled)
                 {
                     _dismantled = false;
-                    this.Content = "?";
+                    //this.Content = "?";
+                    status = 2;
+                    setContent("question");
+
+                }
+                else if (status == 2)
+                {
+                    _dismantled = false;
+                    img.Visibility = Visibility.Hidden;
+                    status = 0;
                 }
                 else
                 {
                     _dismantled = true;
                     this.Foreground = System.Windows.Media.Brushes.Green;
-                    this.Content = "★";
+                    //this.Content = "★";
+                    status = 1;
+                    setContent("flag");
                 }
             }
+        }
+
+        public void setContent(String s)
+        {
+            string path = "";
+            if (s == "flag")
+                path = "Resources\\flag.png";
+            else if (s == "bomb")
+                path = "Resources\\2015-04-20_025246.png";
+            else if (s == "question")
+                path = "Resources\\0143.png";
+            img.Visibility = Visibility.Visible;
+            lbl.Visibility = Visibility.Hidden;
+            img.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
+        }
+        public void setContent(int i)
+        {
+            img.Visibility = Visibility.Hidden;
+            lbl.Visibility = Visibility.Visible;
+            sp = null;
+            lbl.Content = i.ToString();
+            this.Content = i.ToString();
+        }
+        public void setFontSize(int v)
+        {
+            this.FontSize = v;
         }
     }
 }

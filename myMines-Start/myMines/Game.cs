@@ -1,8 +1,12 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls.Primitives;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace myMines
 {
@@ -15,6 +19,8 @@ namespace myMines
         private Window1 _window;
         private Square[,] _squares;
         private bool _IsStarted = false;
+        Image img;
+        Label lbl;
 
         public Game(Window1 window, int width, int height, int mines)
         {
@@ -83,8 +89,11 @@ namespace myMines
                     foreach (Square b in _squares)
                         if (b.Minded)
                         {
+                            
                             b.Foreground = System.Windows.Media.Brushes.Red;
-                            b.Content = "●";
+                            //b.Content = "●";
+                            b.setContent("bomb");
+
                         }
                     _IsStarted = false;
                 }
@@ -174,6 +183,28 @@ namespace myMines
             {
                 Square s = _squares[row, col];
                 Open(s);
+            }
+        }
+
+        public void setContent(String s)
+        {
+            string path = "";
+            if (s == "flag")
+                path = "Resources\\flag.png";
+            else if (s == "bomb")
+                path = "Resources\\2015-04-20_025246.png";
+            else if (s == "question")
+                path = "Resources\\question.jpg";
+            img.Visibility = Visibility.Visible;
+            lbl.Visibility = Visibility.Hidden;
+            img.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
+        }
+
+        public void setFontSize(int v)
+        {
+            foreach (Square s in _squares)
+            {
+                s.setFontSize(v);
             }
         }
     }

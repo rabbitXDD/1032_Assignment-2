@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
+
 namespace myMines
 {
     /// <summary>
@@ -31,6 +32,11 @@ namespace myMines
         {
             InitializeComponent();
             //建立計時器實例、設定屬性及新增事件
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += timer1_Tick;
+            timer.Start();
+            this.Title = "踩地雷";
 
 
 
@@ -38,15 +44,21 @@ namespace myMines
             Reset();
         }
 
+        
+
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
             //重設遊戲畫面
+
             Reset();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+           
             //每一秒在計時Label內顯示秒數
+            lblTimer.Content = (int.Parse(lblTimer.Content.ToString()) + 1).ToString("000");
+
         
         }
 
@@ -56,18 +68,21 @@ namespace myMines
             if (gm.IsStarted && e.Source.GetType() == typeof(Square))
             {
                 //若計時器未啟動則啟動之
-
+                if (!this.timer.IsEnabled)
+                {
+                    this.timer.Start();
+                }
 
                 Square s = (Square)e.Source;
                 //判斷是否按下的是滑鼠左鍵
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     //打開格子(呼叫Game的Click Method傳入s當參數)
-                    
+                    gm.Click(s);
                     if (gm.IsFinished)
                     {
                         //顯示完成訊息
-                        MessageBox.Show("<系級/學號/姓名>\n恭喜您在 " + "lblTimer.Content" + " 秒內完成遊戲!");
+                        MessageBox.Show("<資管二/102306016/李明緯>\n恭喜您在 " + "lblTimer.Content" + " 秒內完成遊戲!");
                         Reset();
                     }
                 }
@@ -75,22 +90,26 @@ namespace myMines
                 else if (e.RightButton == MouseButtonState.Pressed)
                 {
                     //標註地雷 (呼叫Square物件s的DismantleClick Method)
+                    s.DismantleClick();
                     
                     _count = (s.Dismantled) ? _count - 1 : _count + 1;
                     //顯示數目
-
+                    lblCount.Content = _count.ToString("000");
                 }
             }
         }
 
         //重設遊戲畫面
-        void Reset()   
+        void Reset()
         {
+            
+
             //關閉計時器
-
+            timer.Stop();
             //所有label歸零
-
-
+            lblTimer.Content = "000";
+            _count = this._mines;
+            lblCount.Content = this._count.ToString("000");
 
             //建立新的地雷盤
             gm = new Game(this, _width, _height, _mines);
@@ -99,14 +118,18 @@ namespace myMines
 
         private void MenuItem_About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("請顯示關於對話方塊，內容需包含系級學號、姓名資訊\n並放置能清晰辨別個人之生活照一張。");
+            new AboutBox1().Show();
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             //設定初級地雷盤
 
-            
+            _height = 10;
+            _width = 10;
+            _mines = 10;
+            base.Width = base.ActualHeight - 65.0;
+            Reset();
             
             //調整視窗寬度，讓格子看起來像正方形
             
@@ -117,7 +140,11 @@ namespace myMines
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
             //設定中級地雷盤
-
+            _height = 15;
+            _width = 15;
+            _mines = 30;
+            base.Width = base.ActualHeight - 65.0;
+            Reset();
             
             
             //調整視窗寬度，讓格子看起來像正方形
@@ -130,7 +157,11 @@ namespace myMines
         {
             //設定高級地雷盤
 
-            
+            _height = 16;
+            _width = 30;
+            _mines = 99;
+            Width = base.ActualWidth * 2.0;
+            Reset();
             
             //調整視窗寬度，讓格子看起來像正方形
             
@@ -138,10 +169,27 @@ namespace myMines
             Reset();
         }
 
+
         private void MenuItem_Close_Click(object sender, RoutedEventArgs e)
         {
             //關閉視窗
-            
+            base.Close();
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (MessageBox.Show("是否要離開?", "詢問",
+    MessageBoxButton.YesNo, MessageBoxImage.Question)
+    == MessageBoxResult.No)
+                e.Cancel = true;
+        }
+
+        private void Window_SizeChanged_1(object sender, SizeChangedEventArgs e)
+        {
+            double v = this.ActualWidth < this.ActualHeight ?
+            this.ActualWidth : this.ActualHeight;
+            gm.setFontSize((int)v / 25);
+        }
+
     }
 }

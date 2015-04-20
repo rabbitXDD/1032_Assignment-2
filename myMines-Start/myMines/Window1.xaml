@@ -1,8 +1,25 @@
 ﻿<Window x:Class="myMines.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="自製踩地雷" MinHeight="415" MinWidth="350" Height="415" Width="350" PreviewMouseDown="Window_PreviewMouseDown">
+    Title="自製踩地雷" MinHeight="415" MinWidth="350" Height="415" Width="350" PreviewMouseDown="Window_PreviewMouseDown" Closing="Window_Closing" Icon="Resources/Oxygen-Icons.org-Oxygen-Actions-edit-bomb.ico" SizeChanged="Window_SizeChanged_1">
     <DockPanel>
-        <UniformGrid Name="ugdBoard" Background="AliceBlue" />
+        <Menu Name="menu1" Height="25" DockPanel.Dock="Top">
+            <MenuItem Header="遊戲(_G)">
+                <MenuItem Header="初級(_B)：10x10,10地雷" Click="MenuItem_Click_1" />
+                <MenuItem Header="中級(_I)：15x15,30地雷" Click="MenuItem_Click_2" />
+                <MenuItem Header="高級(_A)：16x30,99地雷" Click="MenuItem_Click_3" />
+                <Separator />
+                <MenuItem Header="離開(_X)" Click="MenuItem_Close_Click" />
+            </MenuItem>
+            <MenuItem Header="說明(_H)">
+                <MenuItem Header="關於(_A)" Click="MenuItem_About_Click" />
+            </MenuItem>
+        </Menu>
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+            <Button x:Name="btnReset" Content="Reset" DockPanel.Dock="Left" Click="btnReset_Click" />
+            <Label x:Name="lblCount" Content="Bomb: 0" DockPanel.Dock="Right" />
+            <Label x:Name="lblTimer" Content="Time: 0" DockPanel.Dock="Top" HorizontalAlignment="Center"/>
+        </DockPanel>
+        <UniformGrid Name="ugdBoard" Background="#FFF0F8FF" />
     </DockPanel>
 </Window>
